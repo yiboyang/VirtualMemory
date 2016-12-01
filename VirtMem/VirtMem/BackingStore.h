@@ -2,27 +2,28 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-using namespace std;
 
 class BackingStore
 {
 private:
-	fstream store;
+	std::fstream store;
 	static const int FSIZE = 256;	// frame size (should equal page size)
-	signed char fbuff[FSIZE];	// an array of signed char buffer, holds 
+	unsigned char fbuff[FSIZE];		// an array of unsigned char buffer (as per project requirement), holds content of a frame
 public:
-	BackingStore(string name)
+	BackingStore(std::string name)
 	{
-		store.open(name, ios::binary | ios::in | ios::out);	// open the file that simulates disk in rw mode
+		// open the file that simulates disk in rw mode
+		store.open(name, std::ios::binary | std::ios::in | std::ios::out);
 		if (!store)
-			cerr << "Unable to open backing store file\n";
+			std::cerr << "Unable to open backing store file\n";
 	}
 
-	BackingStore()
+	~BackingStore()
 	{
 		store.close();
 	}
 
 	void read(int fnum);
 
+	const unsigned char * getBuff() { return fbuff; }
 };
