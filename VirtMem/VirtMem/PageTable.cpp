@@ -61,9 +61,9 @@ int PageTable::getFreeFrameNum() {
 	*/ 
 	if (hasFreeFrames()) {
 		// look in the frame table to get the first free frame (linear scan, naive)
-		for (FT::const_iterator it(ft.begin()); it != ft.end(); it++) {
-			if (it->second == -1)
-				return it->first;
+		for (auto const& kv : ft) {
+			if (kv.second == -1)
+				return kv.first;
 		}
 	}
 	else {	// need to replace a page

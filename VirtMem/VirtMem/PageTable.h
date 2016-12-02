@@ -10,7 +10,6 @@
 
 typedef std::map<int, std::pair<int, bool>> PT;	// underlying map for page table; maps page # to the pair <frame # (-1 if not in page table), dirty bit (1 if written to)>
 typedef std::map<int, int> FT; // map for frame table; maps frame number (physical memory) to page number (logical memory)
-// typedef PT::const_iterator It;
 
 class PageTable {
 private:
