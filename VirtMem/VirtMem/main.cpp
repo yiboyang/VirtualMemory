@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 
 	// for debugging
 	argc = 2;
-	argv[1] = "input.txt";
+	argv[1] = "input2.txt";
 
 	if (argc != 2) {
 		cerr << "Usage: ./a.out [input file]\n";
@@ -29,8 +29,8 @@ int main(int argc, char** argv) {
 	// create page table
 	PageTable* T;
 	try {
-		T = new PageTable();	// set to FIFO by default
-		// PageTable* T = new PageTable("LRU");
+		// T = new PageTable();	// set to FIFO by default
+		T = new PageTable("LRU");
 	}
 	catch (const std::invalid_argument& e) {
 		cerr << e.what();
