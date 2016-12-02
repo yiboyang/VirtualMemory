@@ -48,7 +48,6 @@ int PageTable::getFrameNum(int pnum) {
 		bs->read(pnum);		// read the page at pnum on backing store
 		copy(bs->getBuff(), bs->getBuff() + FRAME_SIZE, Memory[fnum]);	// copy into the frame at fnum of physical memory
 		pt[pnum].first = fnum;	// point the pnum enty to fnum in page table
-		fs.erase(fnum);			// remove fnum from the set of free frames
 	}
 	else
 		pageFault = false;
@@ -74,11 +73,11 @@ int PageTable::getFreeFrameNum() {
 	*/
 	int fnum;
 	if (!fs.empty()) {
-		// get the free frame with the smallest frame number
-		fnum = *fs.begin();
+		fnum = *fs.begin();		// always get the free frame with the smallest frame number
+		fs.erase(fnum);			// remove fnum from the set of free frames
 	}
 	else {	// need to replace a page
-		// both FIFO and LRU pops and returns the page # at the front of the queue
+		// either FIFO or LRU replaces the page at the front of the queue
 		int pnum = q.front();	// victim page number
 		fnum = pt[pnum].first;
 		assert(fnum != -1);
@@ -89,6 +88,7 @@ int PageTable::getFreeFrameNum() {
 			setDirty(pnum, false);	// reset dirty bit
 		}
 
+		pt[pnum].first = -1;	// reset victim page's frame number
 		q.pop_front();
 	}
 	return fnum;

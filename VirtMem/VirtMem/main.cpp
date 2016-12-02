@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
 	// for debugging
 	argc = 2;
-	argv[1] = "input2.txt";
+	argv[1] = "input_reads.txt";
 
 	if (argc != 2) {
 		cerr << "Usage: ./a.out [input file]\n";
