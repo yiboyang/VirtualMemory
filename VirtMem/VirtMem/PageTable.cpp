@@ -3,7 +3,7 @@
 #include "PageTable.h"
 using namespace std;
 
-unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];
+unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];	// declare the extern variable
 
 PageTable::PageTable(const string& pageReplacementPolicy, const string& backingStorePath) {
 	if (!(pageReplacementPolicy == "FIFO" || pageReplacementPolicy == "LRU"))
@@ -11,7 +11,7 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 	else
 		replacementPolicy = pageReplacementPolicy;
 
-	// initialize all page entries such that they all point to frame -1 with dirty bit set to false
+	// initialize all page entries such that they all point to frame # -1 with dirty bit set to false
 	for (int i = 0; i < NUM_LOGICAL_MEM_FRAMES; i++) {
 		pt[i] = std::make_pair(-1, false);
 	}
@@ -47,7 +47,7 @@ int PageTable::getFrameNum(int pnum) {
 		numPageFaults++;	// page fault!
 		// read the requested page from backing store into a free frame
 		fnum = getFreeFrameNum();	// somehow find a free frame
-		bs->read(pnum);	// read the page at pnum
+		bs->read(pnum);		// read the page at pnum on backing store
 		copy(bs->getBuff(), bs->getBuff() + FRAME_SIZE, Memory[fnum]);	// copy into the frame at fnum of physical memory
 		pt[pnum].first = fnum;	// point the pnum enty to fnum in page table
 		ft[fnum] = pnum;		// point the fnum to pnum in frame table
@@ -57,10 +57,11 @@ int PageTable::getFrameNum(int pnum) {
 }
 
 int PageTable::getFreeFrameNum() {
-	/* find a free frame and return its frame number
-	*/ 
+	/*
+	Find a free frame and return its frame number
+	*/
 	if (hasFreeFrames()) {
-		// look in the frame table to get the first free frame (linear scan, naive)
+		// scan the frame table to for a free frame (naive)
 		for (auto const& kv : ft) {
 			if (kv.second == -1)
 				return kv.first;

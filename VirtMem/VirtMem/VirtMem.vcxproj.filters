@@ -21,9 +21,18 @@
     <ClCompile Include="BackingStore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PageTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackingStore.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PageTable.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

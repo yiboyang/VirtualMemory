@@ -1,6 +1,6 @@
 #pragma once
 /*
-Define the page size and physical memory
+Define the page (frame) size, logical and physical memory size
 */
 const int NUM_LOGICAL_MEM_FRAMES = 256;	// logical memory can address 2^8=256 frames/pages (each logical address has 16 bits)
 const int NUM_PHYSICAL_MEM_FRAMES = 64;	// physical memory has only 64 frames

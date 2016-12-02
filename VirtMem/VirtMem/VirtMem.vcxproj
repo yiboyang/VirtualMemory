@@ -148,9 +148,12 @@
   <ItemGroup>
     <ClCompile Include="BackingStore.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PageTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackingStore.h" />
+    <ClInclude Include="memory.h" />
+    <ClInclude Include="PageTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
