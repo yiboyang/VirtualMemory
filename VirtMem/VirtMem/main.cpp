@@ -1,62 +1,74 @@
 #include <iostream>
 #include <map>
 #include <fstream>
-#include "BackingStore.h"
+#include <vector>
+#include <sstream>
+#include "memory.h"
+#include "PageTable.h"
 
 using namespace std;
-
-
-const int FRAMESIZE = 256;			// i.e. page size
-const int PHYSICALMEMFRAMES = 64;	// physical memory has only 64 frames
-
-typedef map<int, std::pair<int, bool>> PageTable;	// maps page # to the pair <frame # (-1 if not in page table), dirty bit (1 if written to)>
-
-unsigned char Memory[PHYSICALMEMFRAMES][FRAMESIZE];	// 2^14 bytes physical memory
 
 int main(int argc, char** argv) {
 
 	// for debugging
 	argc = 2;
-	argv[1] = "input_reads.txt";
+	argv[1] = "input2.txt";
 
 	if (argc != 2) {
 		cerr << "Usage: ./a.out [input file]\n";
 		return -1;
 	}
 
-	// open backing store
-	BackingStore * bs;
-	try {
-		bs = new BackingStore("BACKING_STORE.bin");
-	}
-	catch (const std::invalid_argument& e) {
-		std::cerr << "Unable to open backing store file\n";
-		return -1;
-	}
-
 	// open input file
 	ifstream input(argv[1]);
 	if (!input) {
-		std::cerr << "Unable to open input file\n";
+		cerr << "Unable to open input file\n";
 		return -1;
 	}
-	string line;
-	while (getline(input, line)) {
-		cout << line;
+
+	// create page table
+	PageTable* T;
+	try {
+		T = new PageTable();	// set to FIFO by default
+		// PageTable* T = new PageTable("LRU");
+	}
+	catch (const std::invalid_argument& e) {
+		cerr << e.what();
+		return -1;
 	}
 
-	unsigned char test[FRAMESIZE];
 
-	int frame = 209, offset = 179;
+	// input line looks like
+	// R 245
+	// W 5421 132
+	// R(ead) Address, or W(rite) Address Argument, separated by spaces
+	string line, op;
+	int addr, arg, pnum, offset, fnum, memval;
+	vector<string> fields;
+	while (getline(input, line)) {
+		istringstream iss(line);
+		for (string s; iss >> s; )
+			fields.push_back(s);
+		op = fields[0];
+		addr = stoi(fields[1]);
+
+		pnum = addr >> FRAME_SIZE_BITS;	// page number
+		offset = addr & FRAME_OFFSET_MASK;	// page offset
+
+		if (op == "R") {
+			fnum = T->getFrameNum(pnum);
+			memval = Memory[fnum][offset];
+			cout << "Virtual address: " << addr << " Physical address: " << (fnum << FRAME_SIZE_BITS | offset) << " Value: " << memval << endl; 
+		}
+		else if (op == "W") {
+			arg = stoi(fields[2]);
+		}
+		else {
+			cerr << "Bad operation: \n" << op;
+		}
 
 
-
-	bs->read(frame); // test reading frame 0
-	copy(bs->getBuff(), bs->getBuff() + FRAMESIZE, test);
-	// copy to test array
-
-	cout << (int)test[offset] << test[offset];
-
+		fields.clear();
+	}
 	input.close();
-	delete bs;
 }
