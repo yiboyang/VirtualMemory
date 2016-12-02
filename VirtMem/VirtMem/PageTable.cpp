@@ -54,7 +54,7 @@ int PageTable::getFrameNum(int pnum) {
 	else if (replacementPolicy == "LRU") {
 		// in the case of no page fault, FIFO does nothing;
 		// LRU will move the recently accessed page number to the tail of queue
-		deque<int>::const_iterator pos = find(q.begin(), q.end(), pnum);
+		list<int>::const_iterator pos = find(q.begin(), q.end(), pnum);
 		assert(pos != q.end());	// pos must be in queue (as queue must contain all page numbers whose frames are in memory)
 		q.erase(pos);
 		q.push_back(pnum);

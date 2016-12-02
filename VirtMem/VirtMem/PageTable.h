@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <string>
-#include <deque>
+#include <list>
 
 #include "memory.h"
 #include "BackingStore.h"
@@ -14,7 +14,7 @@ private:
 	std::map<int, std::pair<int, bool>> pt;	// page table; maps page # to <frame #, dirty bit>
 	std::set<int> ft;	// frame "table"; not really a table, simply a set of free frame indices
 	std::string replacementPolicy;
-	std::deque<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
+	std::list<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
 	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
 	int numPageFaults = 0;
 	BackingStore* bs;
