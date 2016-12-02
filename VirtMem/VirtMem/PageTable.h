@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <deque>
 
@@ -11,7 +12,7 @@
 class PageTable {
 private:
 	std::map<int, std::pair<int, bool>> pt;	// page table; maps page # to <frame #, dirty bit>
-	std::map<int, int> ft;	// frame table; maps frame number (physical memory) to page number (logical memory)
+	std::set<int> ft;	// frame "table"; not really a table, simply a set of free frame indices
 	std::string replacementPolicy;
 	std::deque<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
 	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
@@ -21,6 +22,5 @@ private:
 public:
 	PageTable(const std::string& pageReplacementPolicy = "FIFO", const std::string& backingStorePath = "BACKING_STORE.bin");
 	~PageTable();
-	bool hasFreeFrame();
 	int getFrameNum(int pnum);
 };

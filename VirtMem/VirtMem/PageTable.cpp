@@ -13,14 +13,12 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 		replacementPolicy = pageReplacementPolicy;
 
 	// initialize all page entries such that they all point to frame # -1 with dirty bit set to false
-	for (int i = 0; i < NUM_LOGICAL_MEM_FRAMES; i++) {
+	for (int i = 0; i < NUM_LOGICAL_MEM_FRAMES; i++)
 		pt[i] = std::make_pair(-1, false);
-	}
 
-	// initialize frame table
-	for (int j = 0; j < NUM_PHYSICAL_MEM_FRAMES; j++) {
-		ft[j] = -1;
-	}
+	// initialize free frames set; at first all frames are free
+	for (int j = 0; j < NUM_PHYSICAL_MEM_FRAMES; j++)
+		ft.insert(ft.end(), j);
 
 	// open backing store
 	bs = new BackingStore(backingStorePath);
@@ -28,14 +26,6 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 
 PageTable::~PageTable() {
 	delete bs;
-}
-
-bool PageTable::hasFreeFrame() {
-	/*
-	Tell if there's any free frame left; the queue size is the number of occupied frames (i.e. entries in ft whose value >=0), so
-	if the queue is full, then the physical memory (all frames) is full
-	*/
-	return q.size() < NUM_PHYSICAL_MEM_FRAMES;
 }
 
 int PageTable::getFrameNum(int pnum) {
@@ -53,8 +43,7 @@ int PageTable::getFrameNum(int pnum) {
 		bs->read(pnum);		// read the page at pnum on backing store
 		copy(bs->getBuff(), bs->getBuff() + FRAME_SIZE, Memory[fnum]);	// copy into the frame at fnum of physical memory
 		pt[pnum].first = fnum;	// point the pnum enty to fnum in page table
-		ft[fnum] = pnum;		// point fnum to pnum in frame table
-
+		ft.erase(fnum);			// remove fnum from the set of free frames
 	}
 	else
 		pageFault = false;
@@ -79,14 +68,9 @@ int PageTable::getFreeFrameNum() {
 	Find a free frame and return its frame number
 	*/
 	int fnum;
-	if (hasFreeFrame()) {
-		// scan the frame table to for a free frame (naive)
-		for (auto const& kv : ft) {
-			if (kv.second == -1) {
-				fnum = kv.first;
-				break;
-			}
-		}
+	if (!ft.empty()) {
+		// get the free frame with the smallest frame number
+		fnum = *ft.begin();
 	}
 	else {	// need to replace a page
 		// both FIFO and LRU pops and returns the page # at the front of the queue 
