@@ -25,13 +25,18 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 }
 
 PageTable::~PageTable() {
+	// commit all dirty pages to backing store
+	for (auto const& kv : pt) {
+		if (kv.second.second)
+			bs->write(kv.first, kv.second.first);
+	}
 	delete bs;
 }
 
 int PageTable::getFrameNum(int pnum) {
 	/*
 	Get the number (index) of the frame in physical memory corresponding to given page number (pnum) in logical memory;
-	this is done prior to every access to Memory
+	this is done prior to every access to Memory. Page faults are resolved automatically.
 	*/
 	int fnum = pt[pnum].first;
 	// if this page is not in page table
@@ -73,14 +78,16 @@ int PageTable::getFreeFrameNum() {
 		fnum = *ft.begin();
 	}
 	else {	// need to replace a page
-		// both FIFO and LRU pops and returns the page # at the front of the queue 
-		fnum = pt[q.front()].first;
+		// both FIFO and LRU pops and returns the page # at the front of the queue
+		int pnum = q.front();	// victim page number
+		fnum = pt[pnum].first;
 		assert(fnum != -1);
 
-		//// transfer a written page to backing store
-		//if (pt[q.front()].second) {
-
-		//}
+		// if a dirty page, write its memory frame to backing store
+		if (pt[pnum].second) {
+			bs->write(fnum, pnum);
+			setDirty(pnum, false);	// reset dirty bit
+		}
 
 		q.pop_front();
 	}

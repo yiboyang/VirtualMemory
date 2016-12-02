@@ -22,5 +22,7 @@ public:
 
 	void read(int pnum);
 
+	void write(int pnum, int fnum);
+
 	const unsigned char * getBuff() { return buff; }
 };

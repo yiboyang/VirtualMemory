@@ -1,5 +1,4 @@
 #include <iostream>
-#include <map>
 #include <fstream>
 #include <vector>
 #include <sstream>
@@ -55,20 +54,25 @@ int main(int argc, char** argv) {
 		pnum = addr >> FRAME_SIZE_BITS;	// page number
 		offset = addr & FRAME_OFFSET_MASK;	// page offset
 
+		// access the page and its frame number
+		fnum = T->getFrameNum(pnum);
+
 		if (op == "R") {
-			fnum = T->getFrameNum(pnum);
-			memval = Memory[fnum][offset];
-			cout << "Virtual address: " << addr << " Physical address: " << ((fnum << FRAME_SIZE_BITS) | offset) << " Value: " << memval << endl;
 		}
 		else if (op == "W") {
+			T->setDirty(pnum, true);
 			arg = stoi(fields[2]);
+			Memory[fnum][offset] = arg;
 		}
 		else {
 			cerr << "Bad operation: " << op << endl;
 		}
 
+		memval = Memory[fnum][offset];
+		cout << "Virtual address: " << addr << " Physical address: " << ((fnum << FRAME_SIZE_BITS) | offset) << " Value: " << memval << endl;
 
 		fields.clear();
 	}
 	input.close();
+	delete T;
 }
