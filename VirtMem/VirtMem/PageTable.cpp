@@ -18,7 +18,7 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 
 	// initialize free frames set; at first all frames are free
 	for (int j = 0; j < NUM_PHYSICAL_MEM_FRAMES; j++)
-		ft.insert(ft.end(), j);
+		fs.insert(fs.end(), j);
 
 	// open backing store
 	bs = new BackingStore(backingStorePath);
@@ -48,7 +48,7 @@ int PageTable::getFrameNum(int pnum) {
 		bs->read(pnum);		// read the page at pnum on backing store
 		copy(bs->getBuff(), bs->getBuff() + FRAME_SIZE, Memory[fnum]);	// copy into the frame at fnum of physical memory
 		pt[pnum].first = fnum;	// point the pnum enty to fnum in page table
-		ft.erase(fnum);			// remove fnum from the set of free frames
+		fs.erase(fnum);			// remove fnum from the set of free frames
 	}
 	else
 		pageFault = false;
@@ -73,9 +73,9 @@ int PageTable::getFreeFrameNum() {
 	Find a free frame and return its frame number
 	*/
 	int fnum;
-	if (!ft.empty()) {
+	if (!fs.empty()) {
 		// get the free frame with the smallest frame number
-		fnum = *ft.begin();
+		fnum = *fs.begin();
 	}
 	else {	// need to replace a page
 		// both FIFO and LRU pops and returns the page # at the front of the queue

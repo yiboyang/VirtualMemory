@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 		pnum = addr >> FRAME_SIZE_BITS;	// page number
 		offset = addr & FRAME_OFFSET_MASK;	// page offset
 
-		// access the page and its frame number
+		// access the page and get its frame number
 		fnum = T->getFrameNum(pnum);
 
 		if (op == "R") {
