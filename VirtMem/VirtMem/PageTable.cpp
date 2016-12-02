@@ -3,7 +3,7 @@
 #include "PageTable.h"
 using namespace std;
 
-unsigned char Memory[PHYSICAL_NUM_FRAMES][FRAME_SIZE];
+unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];
 
 PageTable::PageTable(const string& pageReplacementPolicy, const string& backingStorePath) {
 	if (!(pageReplacementPolicy == "FIFO" || pageReplacementPolicy == "LRU"))
@@ -11,9 +11,14 @@ PageTable::PageTable(const string& pageReplacementPolicy, const string& backingS
 	else
 		replacementPolicy = pageReplacementPolicy;
 
-	// initialize such that all entries point to frame -1 and dirty bit set to false
-	for (int i = 0; i < FRAME_SIZE; i++) {
+	// initialize all page entries such that they all point to frame -1 with dirty bit set to false
+	for (int i = 0; i < NUM_LOGICAL_MEM_FRAMES; i++) {
 		pt[i] = std::make_pair(-1, false);
+	}
+
+	// initialize frame table
+	for (int j = 0; j < NUM_PHYSICAL_MEM_FRAMES; j++) {
+		ft[j] = -1;
 	}
 
 	// open backing store
@@ -25,7 +30,11 @@ PageTable::~PageTable() {
 }
 
 bool PageTable::hasFreeFrames() {
-	return q.size() < PHYSICAL_NUM_FRAMES;	// if the queue (physical memory) is not full, there're free frames available
+	/*
+	Tell if there's any free frame left; the queue size is the number of occupied frames (i.e. entries in ft whose value >=0), so
+	if the queue is full, the physical memory (all frames) is full
+	*/
+	return q.size() < NUM_PHYSICAL_MEM_FRAMES;
 }
 
 int PageTable::getFrameNum(int pnum) {
@@ -40,7 +49,9 @@ int PageTable::getFrameNum(int pnum) {
 		fnum = getFreeFrameNum();	// somehow find a free frame
 		bs->read(pnum);	// read the page at pnum
 		copy(bs->getBuff(), bs->getBuff() + FRAME_SIZE, Memory[fnum]);	// copy into the frame at fnum of physical memory
-		pt[pnum].first = fnum;	// point the pnum entry to fnum
+		pt[pnum].first = fnum;	// point the pnum enty to fnum in page table
+		ft[fnum] = pnum;		// point the fnum to pnum in frame table
+		q.push(fnum);
 	}
 	return fnum;
 }
@@ -49,15 +60,13 @@ int PageTable::getFreeFrameNum() {
 	/* find a free frame and return its frame number
 	*/ 
 	if (hasFreeFrames()) {
-		// look in the frame table to get the first free frame
-		//int i = 0;
-		//for (It it(pt.begin()); it != pt.end(); it++, i++) {
-		//	if (it->second.first == -1)
-		//		break;
-		//}
-		//return i;
+		// look in the frame table to get the first free frame (linear scan, naive)
+		for (FT::const_iterator it(ft.begin()); it != ft.end(); it++) {
+			if (it->second == -1)
+				return it->first;
+		}
 	}
 	else {	// need to replace a page
 	}
-	return 0;
+	return -2;
 }

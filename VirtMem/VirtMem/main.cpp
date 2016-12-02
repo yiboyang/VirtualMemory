@@ -58,13 +58,13 @@ int main(int argc, char** argv) {
 		if (op == "R") {
 			fnum = T->getFrameNum(pnum);
 			memval = Memory[fnum][offset];
-			cout << "Virtual address: " << addr << " Physical address: " << (fnum << FRAME_SIZE_BITS | offset) << " Value: " << memval << endl; 
+			cout << "Virtual address: " << addr << " Physical address: " << ((fnum << FRAME_SIZE_BITS) | offset) << " Value: " << memval << endl; 
 		}
 		else if (op == "W") {
 			arg = stoi(fields[2]);
 		}
 		else {
-			cerr << "Bad operation: \n" << op;
+			cerr << "Bad operation: " << op << endl;
 		}
 
 
