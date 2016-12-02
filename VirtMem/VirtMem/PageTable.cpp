@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <assert.h>	// for debugging
 #include "PageTable.h"
 using namespace std;
@@ -8,13 +9,13 @@ unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];	// declare the extern
 
 PageTable::PageTable(const string& pageReplacementPolicy, const string& backingStorePath) {
 	if (!(pageReplacementPolicy == "FIFO" || pageReplacementPolicy == "LRU"))
-		throw std::invalid_argument("Page replacement policy must be FIFO or LRU");
+		throw invalid_argument("Page replacement policy must be FIFO or LRU");
 	else
 		replacementPolicy = pageReplacementPolicy;
 
 	// initialize all page entries such that they all point to frame # -1 with dirty bit set to false
 	for (int i = 0; i < NUM_LOGICAL_MEM_FRAMES; i++)
-		pt[i] = std::make_pair(-1, false);
+		pt[i] = make_pair(-1, false);
 
 	// initialize free frames set; at first all frames are free
 	for (int j = 0; j < NUM_PHYSICAL_MEM_FRAMES; j++)
@@ -58,7 +59,7 @@ int PageTable::getFrameNum(int pnum) {
 	else if (replacementPolicy == "LRU") {
 		// in the case of no page fault, FIFO does nothing;
 		// LRU will move the recently accessed page number to the tail of queue
-		list<int>::const_iterator pos = find(q.begin(), q.end(), pnum);
+		list<int>::iterator pos = find(q.begin(), q.end(), pnum);
 		assert(pos != q.end());	// pos must be in queue (as queue must contain all page numbers whose frames are in memory)
 		q.erase(pos);
 		q.push_back(pnum);
