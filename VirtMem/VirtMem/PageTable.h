@@ -13,7 +13,7 @@ class PageTable {
 private:
 	std::map<int, std::pair<int, bool>> pt;	// page table; maps page # to <frame #, dirty bit>
 	std::set<int> fs;	// a set of free frame indices ("frame table")
-	std::string replacementPolicy;
+	std::string pageReplacementPolicy;
 	std::list<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
 	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
 	int numPageFaults = 0;
