@@ -8,3 +8,4 @@ const int FRAME_SIZE_BITS = 8;		// lower 8 bits of logical memory address
 const int FRAME_SIZE = 256;			// 2^FRAME_SIZE, same as page size (in number of bytes)
 const int FRAME_OFFSET_MASK = FRAME_SIZE - 1;	// mask to preserve the lower 8 bits (255 is binary 1111 1111)
 extern unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];	// 64*256=2^14 bytes physical memor
+const int TLB_SIZE = 16;			// max number of entries in the translation lookaside buffer

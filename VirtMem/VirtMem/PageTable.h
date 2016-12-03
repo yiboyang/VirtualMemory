@@ -8,6 +8,7 @@
 
 #include "memory.h"
 #include "BackingStore.h"
+#include "TLB.h"
 
 class PageTable {
 private:
@@ -17,7 +18,8 @@ private:
 	std::list<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
 	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
 	int numPageFaults = 0;
-	BackingStore* bs;
+	BackingStore bs;
+	TLB tlb;
 	int getFreeFrameNum();
 public:
 	PageTable(const std::string& pageReplacementPolicy = "FIFO", const std::string& backingStorePath = "BACKING_STORE.bin");
