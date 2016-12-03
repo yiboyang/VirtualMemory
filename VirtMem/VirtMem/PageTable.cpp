@@ -1,7 +1,6 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
-#include <assert.h>	// for debugging
 #include "PageTable.h"
 #include "TLB.h"
 
@@ -38,10 +37,11 @@ int PageTable::operator[](const int pnum) {
 	this is done prior to every access to Memory. Page faults are resolved automatically.
 	*/
 	int fnum;
-	pageFault = false;
-	if (tlb.contains(pnum))	// look in TLB first
+	pageFault = tlbMiss = false;
+	if (tlb.contains(pnum)) // look in TLB first
 		fnum = tlb[pnum];
 	else { // TLB miss; look in page table
+		tlbMiss = true;
 		fnum = pt[pnum].first;
 
 		if (fnum == -1) {
@@ -67,9 +67,7 @@ int PageTable::operator[](const int pnum) {
 		// in the case of no page fault, FIFO does nothing;
 		// LRU will move the recently accessed page number to the tail of queue
 		if (pageReplacementPolicy == "LRU") {
-			list<int>::iterator pos = find(q.begin(), q.end(), pnum);
-			assert(pos != q.end());	// pos must be in queue (as queue must contain all page numbers whose frames are in memory)
-			q.erase(pos);
+			q.remove(pnum);
 			q.push_back(pnum);
 		}
 	}
@@ -87,11 +85,10 @@ int PageTable::getFreeFrameNum() {
 		fnum = *fs.begin();		// always get the free frame with the smallest frame number
 		fs.erase(fnum);			// remove fnum from the set of free frames
 	}
-	else {	// need to replace a page
+	else {	// need to replace a page, q is full (since we don't delete a page by itself, fs.size() == 64 - q.size())
 		// either FIFO or LRU replaces the page at the front of the queue
 		int pnum = q.front();	// victim page number
 		fnum = pt[pnum].first;
-		assert(fnum != -1);
 
 		// if a dirty page, write its memory frame to backing store
 		if (pt[pnum].second) {

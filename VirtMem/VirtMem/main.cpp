@@ -64,12 +64,15 @@ int main(int argc, char** argv) {
 			arg = stoi(fields[2]);
 			Memory[fnum][offset] = arg;
 		}
-		else {
+		else
 			cerr << "Bad operation: " << op << endl;
-		}
 
 		memval = Memory[fnum][offset];
-		cout << "Virtual address: " << addr << " Physical address: " << ((fnum << FRAME_SIZE_BITS) | offset) << " Value: " << memval << endl;
+
+		// output format: page #, offset, TLB hit, page fault, physical address, value
+		cout << pnum << ' ' << offset << ' ' << (!T->tlbMiss ? 'H' : 'N') << ' '
+			<< (T->pageFault ? 'F' : 'N') << ' ' << ((fnum << FRAME_SIZE_BITS) | offset)
+			<< ' ' << memval << endl;
 
 		fields.clear();
 	}

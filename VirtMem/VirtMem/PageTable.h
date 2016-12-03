@@ -16,14 +16,15 @@ private:
 	std::set<int> fs;	// a set of free frame indices ("frame table")
 	std::string pageReplacementPolicy;
 	std::list<int> q;	// a queue (deque) of used pages, for implementing FIFO or LRU page replacement
-	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
-	int numPageFaults = 0;
 	BackingStore bs;
 	TLB tlb;
 	int getFreeFrameNum();
 public:
 	PageTable(const std::string& pageReplacementPolicy = "FIFO", const std::string& backingStorePath = "BACKING_STORE.bin");
 	~PageTable();
+	bool pageFault = false;	// a bit indicating whether the last page access resulted in page fault
+	int numPageFaults = 0;
+	bool tlbMiss = false;	// a bit indicating whether the last page access resulted in TLB miss
 	int operator[] (const int pnum);
 	void setDirty(int pnum, bool dirty) { pt[pnum].second = dirty; }
 };
