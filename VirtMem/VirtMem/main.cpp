@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
 	// for debugging
 	argc = 2;
-	argv[1] = "input3.txt";
+	argv[1] = "input_reads.txt";
 
 	if (argc != 2) {
 		cerr << "Usage: ./a.out [input file]\n";
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 		offset = addr & FRAME_OFFSET_MASK;	// page offset
 
 		// access the page and get its frame number
-		fnum = T->getFrameNum(pnum);
+		fnum = (*T)[pnum];
 
 		if (op == "R") {
 		}

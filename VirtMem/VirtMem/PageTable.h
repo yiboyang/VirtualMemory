@@ -24,6 +24,6 @@ private:
 public:
 	PageTable(const std::string& pageReplacementPolicy = "FIFO", const std::string& backingStorePath = "BACKING_STORE.bin");
 	~PageTable();
-	int getFrameNum(int pnum);
+	int operator[] (const int pnum);
 	void setDirty(int pnum, bool dirty) { pt[pnum].second = dirty; }
 };

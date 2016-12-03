@@ -32,7 +32,7 @@ PageTable::~PageTable() {
 	}
 }
 
-int PageTable::getFrameNum(int pnum) {
+int PageTable::operator[](const int pnum) {
 	/*
 	Get the number (index) of the frame in physical memory corresponding to given page number (pnum) in logical memory;
 	this is done prior to every access to Memory. Page faults are resolved automatically.
