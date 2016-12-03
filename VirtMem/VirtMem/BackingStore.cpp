@@ -5,8 +5,6 @@
 
 #include "BackingStore.h"
 
-using namespace std;
-
 /*
 Read page at pnum (0 based index) into buffer
 */

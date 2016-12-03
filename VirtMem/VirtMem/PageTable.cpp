@@ -85,7 +85,7 @@ int PageTable::getFreeFrameNum() {
 
 		// if a dirty page, write its memory frame to backing store
 		if (pt[pnum].second) {
-			bs->write(fnum, pnum);
+			bs->write(pnum, fnum);
 			setDirty(pnum, false);	// reset dirty bit
 		}
 
