@@ -10,31 +10,37 @@ using namespace std;
 int main(int argc, char** argv) {
 
 	// for debugging
-	argc = 2;
-	argv[1] = "sample_input.txt";
+	argc = 3;
+	argv[1] = "-L";
+	argv[2] = "sample_input.txt";
 
-	if (argc != 2) {
-		cerr << "Usage: ./a.out [input file]\n";
-		return -1;
-	}
-
-	// open input file
-	ifstream input(argv[1]);
-	if (!input) {
-		cerr << "Unable to open input file\n";
+	if (argc != 3 | (strcmp(argv[1], "-F") && strcmp(argv[1], "-L"))) {
+		cerr << "Usage: ./a.out [-F|-L] [INPUT FILE]" << endl
+			<< "\t-F, use FIFO page replacement policy" << endl
+			<< "\t-L, use LRU page replacment policy" << endl;
 		return -1;
 	}
 
 	// create page table
 	PageTable* T;
 	try {
-		// T = new PageTable();	// set to FIFO by default
-		T = new PageTable("LRU");
+		if (!strcmp(argv[1], "-F"))
+			T = new PageTable("FIFO");
+		else
+			T = new PageTable("LRU");
 	}
 	catch (const std::invalid_argument& e) {
 		cerr << e.what();
 		return -1;
 	}
+
+	// open input file
+	ifstream input(argv[2]);
+	if (!input) {
+		cerr << "Unable to open input file\n";
+		return -1;
+	}
+
 
 
 	// input line looks like
