@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <fstream>
 #include <vector>
 #include <sstream>
@@ -10,11 +11,11 @@ using namespace std;
 int main(int argc, char** argv) {
 
 	// for debugging
-	argc = 3;
-	argv[1] = "-L";
-	argv[2] = "sample_input.txt";
+	// argc = 3;
+	// argv[1] = "-L";
+	// argv[2] = "sample_input.txt";
 
-	if (argc != 3 | (strcmp(argv[1], "-F") && strcmp(argv[1], "-L"))) {
+	if ((argc != 3) || (strcmp(argv[1], "-F") && strcmp(argv[1], "-L"))) {
 		cerr << "Usage: ./a.out [-F|-L] [INPUT FILE]" << endl
 			<< "\t-F, use FIFO page replacement policy" << endl
 			<< "\t-L, use LRU page replacment policy" << endl;
@@ -86,7 +87,7 @@ int main(int argc, char** argv) {
 		fields.clear();
 	}
 	cout << endl << "Page Table:" << endl << *T << endl;
-	cout << endl << T->numPageFaults << " Page Faults";
+	cout << endl << T->numPageFaults << " Page Faults" << endl;
 	input.close();
 	delete T;
 }
