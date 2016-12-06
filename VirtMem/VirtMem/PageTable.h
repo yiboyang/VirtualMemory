@@ -19,6 +19,7 @@ private:
 	BackingStore bs;
 	TLB tlb;
 	int getFreeFrameNum();
+	friend std::ostream& operator<<(std::ostream&, const PageTable&);
 public:
 	PageTable(const std::string& pageReplacementPolicy = "FIFO", const std::string& backingStorePath = "BACKING_STORE.bin");
 	~PageTable();

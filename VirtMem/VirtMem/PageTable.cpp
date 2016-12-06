@@ -101,3 +101,12 @@ int PageTable::getFreeFrameNum() {
 	}
 	return fnum;
 }
+
+// print all valid entries of page table, page # followed by frame #
+ostream& operator<<(ostream &strm, const PageTable &PT) {
+	for (auto const& kv : PT.pt) {
+		if (kv.second.first != -1)
+			strm << kv.first << ' ' << kv.second.first << endl;
+	}
+	return strm;
+}
