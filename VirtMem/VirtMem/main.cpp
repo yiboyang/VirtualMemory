@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
 	// for debugging
 	argc = 2;
-	argv[1] = "input_small.txt";
+	argv[1] = "sample_input.txt";
 
 	if (argc != 2) {
 		cerr << "Usage: ./a.out [input file]\n";
@@ -69,14 +69,18 @@ int main(int argc, char** argv) {
 
 		memval = Memory[fnum][offset];
 
-		// output format: page #, offset, TLB hit, page fault, physical address, value
+		// output format: page #, offset, TLB hit, page fault, physical address, value (only for reads)
 		cout << pnum << ' ' << offset << ' ' << (!T->tlbMiss ? 'H' : 'N') << ' '
-			<< (T->pageFault ? 'F' : 'N') << ' ' << ((fnum << FRAME_SIZE_BITS) | offset)
-			<< ' ' << memval << endl;
+			<< (T->pageFault ? 'F' : 'N') << ' ' << ((fnum << FRAME_SIZE_BITS) | offset);
+		// print memory content for reads
+		if (op == "R")
+			cout << ' ' << memval;
+		cout << endl;
 
 		fields.clear();
 	}
 	cout << endl << "Page Table:" << endl << *T << endl;
+	cout << endl << T->numPageFaults << " Page Faults";
 	input.close();
 	delete T;
 }
