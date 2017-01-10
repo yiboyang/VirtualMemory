@@ -1,0 +1,23 @@
+This is a simulation of virtual memory with paging and LRU cache, based on
+chapter 9 programming project of Operating System Concepts, 9th edition.
+
+Compile:
+    Simply run 'make'.
+
+Run:
+    ./a.out -F|-L input_file
+    Must specify either -F (FIFO) or -L (LRU) page replacement policy.
+    Note that the TLB uses the LRU policy, and a backing storage mirrors the
+    memory contents (therefore reads and writes can occur in any order).
+
+Examples:
+    ./a.out -F input.txt > FIFO_output.txt
+    ./a.out -L input.txt > LRU_output.txt
+
+Observations:
+LRU is comparatively better than FIFO based on my input. Some input
+addresses appear periodically, and LRU keeps these addresses to allow
+recurrent accesses without page faults; by contrast FIFO simply replaces
+pages soley based on the time they're brought in, without considering their
+actual usage/access pattern. Had my input addresses been more random, I
+would expect both page replacement algorithms to perform similarly.
