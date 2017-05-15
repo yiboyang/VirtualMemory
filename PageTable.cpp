@@ -3,10 +3,11 @@
 #include <algorithm>
 #include "PageTable.h"
 #include "TLB.h"
+#include "memory.h"
 
 using namespace std;
 
-unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];	// declare the extern variable
+unsigned char Memory[NUM_PHYSICAL_MEM_FRAMES][FRAME_SIZE];	// define the extern variable
 
 PageTable::PageTable(const string& pageReplacementPolicy, const string& backingStorePath) : bs(backingStorePath) {
 	if (!(pageReplacementPolicy == "FIFO" || pageReplacementPolicy == "LRU"))

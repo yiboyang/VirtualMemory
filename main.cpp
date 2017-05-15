@@ -10,12 +10,7 @@ using namespace std;
 
 int main(int argc, char** argv) {
 
-	// for debugging
-	// argc = 3;
-	// argv[1] = "-L";
-	// argv[2] = "sample_input.txt";
-
-	if ((argc != 3) || (strcmp(argv[1], "-F") && strcmp(argv[1], "-L"))) {
+	if (!((argc == 3) && (strcmp(argv[1], "-F") == 0 || strcmp(argv[1], "-L") == 0))) {
 		cerr << "Usage: ./a.out [-F|-L] [INPUT FILE]" << endl
 			<< "\t-F, use FIFO page replacement policy" << endl
 			<< "\t-L, use LRU page replacment policy" << endl;
@@ -23,17 +18,7 @@ int main(int argc, char** argv) {
 	}
 
 	// create page table
-	PageTable* T;
-	try {
-		if (!strcmp(argv[1], "-F"))
-			T = new PageTable("FIFO");
-		else
-			T = new PageTable("LRU");
-	}
-	catch (const std::invalid_argument& e) {
-		cerr << e.what();
-		return -1;
-	}
+	PageTable T(strcmp(argv[1], "-F") == 0 ? "FIFO" : "LRU");
 
 	// open input file
 	ifstream input(argv[2]);
@@ -62,12 +47,12 @@ int main(int argc, char** argv) {
 		offset = addr & FRAME_OFFSET_MASK;	// page offset
 
 		// access the page and get its frame number
-		fnum = (*T)[pnum];
+		fnum = T[pnum];
 
 		if (op == "R") {
 		}
 		else if (op == "W") {
-			T->setDirty(pnum, true);
+			T.setDirty(pnum, true);
 			arg = stoi(fields[2]);
 			Memory[fnum][offset] = arg;
 		}
@@ -77,8 +62,8 @@ int main(int argc, char** argv) {
 		memval = Memory[fnum][offset];
 
 		// output format: page #, offset, TLB hit, page fault, physical address, value (only for reads)
-		cout << pnum << ' ' << offset << ' ' << (!T->tlbMiss ? 'H' : 'N') << ' '
-			<< (T->pageFault ? 'F' : 'N') << ' ' << ((fnum << FRAME_SIZE_BITS) | offset);
+		cout << pnum << ' ' << offset << ' ' << (!T.tlbMiss ? 'H' : 'N') << ' '
+			<< (T.pageFault ? 'F' : 'N') << ' ' << ((fnum << FRAME_SIZE_BITS) | offset);
 		// print memory content for reads
 		if (op == "R")
 			cout << ' ' << memval;
@@ -86,8 +71,7 @@ int main(int argc, char** argv) {
 
 		fields.clear();
 	}
-	cout << endl << "Page Table:" << endl << *T << endl;
-	cout << endl << T->numPageFaults << " Page Faults" << endl;
+	cout << endl << "Page Table:" << endl << T << endl;
+	cout << endl << T.numPageFaults << " Page Faults" << endl;
 	input.close();
-	delete T;
 }
